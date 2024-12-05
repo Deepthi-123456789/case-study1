@@ -18,6 +18,7 @@ pipeline {
         {
             when { expression { params.action == 'create' } }
             steps {
+                sh 'rm -rf case-study1'
                 sh 'git clone https://github.com/Deepthi-123456789/case-study1.git'
             }
         }
