@@ -17,7 +17,7 @@ pipeline {
         stage('Git Checkout'){
                     when { expression {  params.action == 'create' } }
             steps{
-            gitCheckout(
+                gitCheckout(
                 branch: "main",
                 url: "https://github.com/Deepthi-123456789/case-study1.git"
             )
