@@ -85,6 +85,7 @@ pipeline {
                 script {
                     // Install Minikube if it's not installed
                     sh '''
+                        echo "Current PATH: $PATH"
                         if ! command -v minikube > /dev/null 2>&1; then
                             echo "Minikube not found. Installing Minikube..."
                             curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/v1.30.1/minikube-linux-amd64
@@ -92,13 +93,17 @@ pipeline {
                             mkdir -p ${MINIKUBE_BIN}
                             mv minikube ${MINIKUBE_BIN}/
                             export PATH=${MINIKUBE_BIN}:$PATH
+                            echo "Updated PATH: $PATH"
                         else
                             echo "Minikube is already installed."
                         fi
                     '''
 
                     // Check Minikube installation
-                    sh 'minikube version'
+                    sh '''
+                        echo "Checking minikube version..."
+                        minikube version
+                    '''
 
                     // Start Minikube if it's not already running
                     sh '''
