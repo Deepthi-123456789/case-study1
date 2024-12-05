@@ -11,8 +11,6 @@ pipeline {
     environment {
         packageVersion = '1.0.1'
         nexusURL = '44.201.183.60:8081'
-        MINIKUBE_HOME = '/var/lib/jenkins'  // Adjust this to your Jenkins home directory if needed
-        MINIKUBE_BIN = "${MINIKUBE_HOME}/bin"
     }
 
     stages {
@@ -83,29 +81,7 @@ pipeline {
             when { expression { params.action == 'create' } }
             steps {
                 script {
-                    // Install Minikube if it's not installed
-                    sh '''
-                        echo "Current PATH: $PATH"
-                        if ! command -v minikube > /dev/null 2>&1; then
-                            echo "Minikube not found. Installing Minikube..."
-                            curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/v1.30.1/minikube-linux-amd64
-                            chmod +x minikube
-                            mkdir -p ${MINIKUBE_BIN}
-                            mv minikube ${MINIKUBE_BIN}/
-                            export PATH=${MINIKUBE_BIN}:$PATH
-                            echo "Updated PATH: $PATH"
-                        else
-                            echo "Minikube is already installed."
-                        fi
-                    '''
-
-                    // Check Minikube installation
-                    sh '''
-                        echo "Checking minikube version..."
-                        minikube version
-                    '''
-
-                    // Start Minikube if it's not already running
+                    // Check if Minikube is running
                     sh '''
                         if ! minikube status > /dev/null; then
                             echo "Starting Minikube..."
