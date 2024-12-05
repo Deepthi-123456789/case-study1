@@ -7,8 +7,8 @@ pipeline {
         string(name: 'ImageTag', description: "Tag of the Docker build", defaultValue: 'v1')
         string(name: 'DockerHubUser', description: "DockerHub Username", defaultValue: 'deepthi555')
     }
-    
-    environment { 
+
+    environment {
         packageVersion = '1.0.1'
         nexusURL = '44.201.183.60:8081'
     }
@@ -56,23 +56,19 @@ pipeline {
             }
         }
 
-        stage('Docker Image Build') 
-        {
+        stage('Docker Image Build') {
             when { expression { params.action == 'create' } }
-            steps 
-            {
+            steps {
                 sh "docker build -t ${params.DockerHubUser}/${params.ImageName}:${params.ImageTag} ."
             }
         }
 
-        stage('Docker Image Push : DockerHub')
-        {
+        stage('Docker Image Push : DockerHub') {
             when { expression { params.action == 'create' } }
             steps {
                 echo "Starting Docker Image Push Stage"
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) 
-                    {
+                    withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                         sh "docker push ${params.DockerHubUser}/${params.ImageName}:${params.ImageTag}"
                     }
@@ -81,60 +77,55 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') 
-        {
+        stage('Deploy to Kubernetes') {
             when { expression { params.action == 'create' } }
             steps {
                 script {
-                     // Install Minikube if it's not installed
+                    // Install Minikube if it's not installed
                     sh '''
                         if ! command -v minikube > /dev/null 2>&1; then
-                        echo "Minikube not found. Installing Minikube..."
-                        curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/v1.30.1/minikube-linux-amd64
-                        chmod +x minikube
-                        sudo mv minikube /usr/local/bin/
+                            echo "Minikube not found. Installing Minikube..."
+                            curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/v1.30.1/minikube-linux-amd64
+                            chmod +x minikube
+                            sudo mv minikube /usr/local/bin/
                         else
                             echo "Minikube is already installed."
-                            fi
+                        fi
                     '''
-            
-                // Start Minikube if it's not already running
-                sh '''
-                    if ! minikube status > /dev/null; then
-                        echo "Starting Minikube..."
-                        minikube start --driver=docker
-                    else
-                        echo "Minikube is already running."
-                    fi
-                '''
-            
-            // Set kubectl context to Minikube
-            sh '''
-                kubectl config use-context minikube
-            '''
-            
-            // Deploy the web app using Helm
-            sh '''
-                cd web
-                helm upgrade --install web . --namespace default --create-namespace
-            '''
+
+                    // Start Minikube if it's not already running
+                    sh '''
+                        if ! minikube status > /dev/null; then
+                            echo "Starting Minikube..."
+                            minikube start --driver=docker
+                        else
+                            echo "Minikube is already running."
+                        fi
+                    '''
+
+                    // Set kubectl context to Minikube
+                    sh '''
+                        kubectl config use-context minikube
+                    '''
+
+                    // Deploy the web app using Helm
+                    sh '''
+                        cd web
+                        helm upgrade --install web . --namespace default --create-namespace
+                    '''
+                }
+            }
         }
     }
-}
 
-
-    post 
-    {
-        always 
-        {
+    post {
+        always {
             echo "Pipeline execution complete!"
         }
-        success 
-        {
+        success {
             echo "CI/CD Pipeline succeeded!"
         }
-        failure 
-        {
+        failure {
             echo "CI/CD Pipeline failed."
         }
     }
