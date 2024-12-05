@@ -20,6 +20,7 @@ Select Proceed without a key pair. and launch the innstance
 >docker
 >nexus
 > Kubernetes cluster (e.g., Minikube, EKS) 
+>install zip(to create artifacts)
 Install minikube,kubectl and helm
 
 
