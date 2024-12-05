@@ -11,7 +11,7 @@ pipeline {
     environment {
         packageVersion = '1.0.1'
         nexusURL = '44.201.183.60:8081'
-        KUBECONFIG = '/home/ubuntu/.kube/config'  // Path to your kubeconfig file
+        KUBECONFIG = '/home/jenkins/.kube/config'  // Path to your kubeconfig file
     }
 
     stages {
