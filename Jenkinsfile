@@ -81,6 +81,11 @@ pipeline {
             when { expression { params.action == 'create' } }
             steps {
                 script {
+                    // Set kubectl context to the correct cluster (if applicable)
+                    sh '''
+                        kubectl config use-context <your-k8s-cluster-context>
+                    '''
+
                     // Deploy using Helm
                     sh '''
                         cd web
