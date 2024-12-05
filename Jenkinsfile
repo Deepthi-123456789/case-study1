@@ -15,6 +15,7 @@ pipeline {
     stages {
         stage('Checkout SCM') 
         {
+            when { expression { params.action == 'create' } }
             steps {
                 sh 'git clone https://github.com/Deepthi-123456789/case-study1.git'
             }
