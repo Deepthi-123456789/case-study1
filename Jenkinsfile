@@ -96,6 +96,9 @@ pipeline {
                         fi
                     '''
 
+                    // Check Minikube installation
+                    sh 'minikube version'
+
                     // Start Minikube if it's not already running
                     sh '''
                         if ! minikube status > /dev/null; then
