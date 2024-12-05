@@ -12,17 +12,15 @@ pipeline {
         nexusURL = '3.80.145.144:8081'
     }
     
-    stages 
-    {
-        stage('Git Checkout'){
-                    when { expression {  params.action == 'create' } }
-            steps{
-                gitCheckout(
-                branch: "main",
-                url: "https://github.com/Deepthi-123456789/case-study1.git"
-            )
+    stages {
+        stage('Checkout SCM') 
+        {
+            steps {
+                sh 'git clone https://github.com/Deepthi-123456789/case-study1.git'
             }
         }
+    }
+
         stage('Build') {
             steps {
                 sh """
