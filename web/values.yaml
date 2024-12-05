@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: deepthi555/web
+  tag: v1
+  pullPolicy: Always
+
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "100m"
+    memory: "128Mi"
+
+nginxConfigMap: web
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 5
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+  protocol: TCP
