@@ -81,21 +81,6 @@ pipeline {
             when { expression { params.action == 'create' } }
             steps {
                 script {
-                    // Check if Minikube is running
-                    sh '''
-                        if ! minikube status > /dev/null; then
-                            echo "Starting Minikube..."
-                            minikube start --driver=docker
-                        else
-                            echo "Minikube is already running."
-                        fi
-                    '''
-
-                    // Set kubectl context to Minikube
-                    sh '''
-                        kubectl config use-context minikube
-                    '''
-
                     // Deploy using Helm
                     sh '''
                         cd web
