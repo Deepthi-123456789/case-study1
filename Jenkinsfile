@@ -90,7 +90,7 @@ pipeline {
                             mkdir -p $HOME/bin
                             mv minikube $HOME/bin/
                             echo "export PATH=$HOME/bin:$PATH" >> ~/.bashrc
-                            source ~/.bashrc
+                            . ~/.bashrc
                         else
                             echo "Minikube is already installed."
                         fi
