@@ -11,6 +11,8 @@ pipeline {
     environment {
         packageVersion = '1.0.1'
         nexusURL = '44.201.183.60:8081'
+        KUBECONFIG = '/home/jenkins/.kube/config'  // Path to your kubeconfig file
+        CLUSTER_CONTEXT = 'your-cluster-context'  // The name of your Kubernetes context
     }
 
     stages {
@@ -77,20 +79,39 @@ pipeline {
             }
         }
 
+        stage('Check Helm Version') {
+            when { expression { params.action == 'create' } }
+            steps {
+                sh '''
+                    helm version
+                '''
+            }
+        }
+
+        stage('Set Kubernetes Context') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
+                    // Set Kubernetes context before Helm deployment
+                    echo "Switching Kubernetes context to $CLUSTER_CONTEXT"
+                    sh """
+                        export KUBECONFIG=$KUBECONFIG
+                        kubectl config use-context $CLUSTER_CONTEXT
+                    """
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes Using Helm') {
             when { expression { params.action == 'create' } }
             steps {
                 script {
-                    // Set kubectl context to the correct cluster (if applicable)
-                    sh '''
-                        kubectl config use-context <your-k8s-cluster-context>
-                    '''
-
-                    // Deploy using Helm
-                    sh '''
-                        cd web
-                        helm upgrade --install web . --namespace default --create-namespace
-                    '''
+                    // Deploy with Helm
+                    sh """
+                        echo "Using Kubeconfig: $KUBECONFIG"
+                        export KUBECONFIG=$KUBECONFIG
+                        helm upgrade --install web ./web --namespace default --create-namespace
+                    """
                 }
             }
         }
