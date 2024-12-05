@@ -8,7 +8,8 @@ pipeline {
         string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'deepthi555')
     }
     environment { 
-        nexusURL = '172.31.5.95:8081'
+        packageVersion = '1.0.1'
+        nexusURL = '3.80.145.144:8081'
     }
     
     stages 
@@ -38,6 +39,7 @@ pipeline {
                     protocol: 'http',
                     nexusUrl: "${nexusURL}",
                     groupId: 'com.roboshop',
+                    version: "${packageVersion}",
                     repository: 'web',
                     credentialsId: 'nexus-auth',
                     artifacts: [
