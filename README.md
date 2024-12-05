@@ -7,8 +7,8 @@ Assume we are deploying a sample web application.
 
 Infrastructure Setup:
 --------------------
->>>>Click Launch Instances.
->>>>Name and tags: Enter a name for your instance.(web)
+>Click Launch Instances.
+>Name and tags: Enter a name for your instance.(web)
 >Application and OS Images (AMI): Choose Ubuntu Server 
 >Instance type: Select t3.medium.
 >change the inbound rule for securitygroup
