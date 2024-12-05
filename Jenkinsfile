@@ -77,7 +77,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes Using Helm') {
             when { expression { params.action == 'create' } }
             steps {
                 script {
@@ -87,7 +87,10 @@ pipeline {
                             echo "Minikube not found. Installing Minikube..."
                             curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/v1.30.1/minikube-linux-amd64
                             chmod +x minikube
-                            sudo mv minikube /usr/local/bin/
+                            mkdir -p $HOME/bin
+                            mv minikube $HOME/bin/
+                            echo "export PATH=$HOME/bin:$PATH" >> ~/.bashrc
+                            source ~/.bashrc
                         else
                             echo "Minikube is already installed."
                         fi
@@ -108,7 +111,7 @@ pipeline {
                         kubectl config use-context minikube
                     '''
 
-                    // Deploy the web app using Helm
+                    // Deploy using Helm
                     sh '''
                         cd web
                         helm upgrade --install web . --namespace default --create-namespace
