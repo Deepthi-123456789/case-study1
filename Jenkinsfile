@@ -89,11 +89,16 @@ pipeline {
                     try {
                         // Configure AWS CLI with credentials
                         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) 
-                        {
+                        {   
                             sh '''
-                                aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-                                aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-                                aws configure set region us-east-1  # Adjust region if needed
+                                if ! aws sts get-caller-identity > /dev/null; then
+                                    echo "Configuring AWS CLI..."
+                                    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                                    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                                    aws configure set region us-east-1  # Adjust region if needed
+                                else
+                                    echo "AWS CLI already configured."
+                                fi
                             '''
                         }
 
