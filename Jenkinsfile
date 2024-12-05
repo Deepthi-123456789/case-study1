@@ -81,7 +81,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Minikube') 
+        stage('Deploy to kubernetes') 
         {
             when { expression { params.action == 'create' } }
             steps 
