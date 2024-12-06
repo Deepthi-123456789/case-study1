@@ -90,6 +90,8 @@ pipeline {
         stage('Deploy to Kubernetes Using Helm') {
             when { expression { params.action == 'create' } }
             steps {
+                dir('case-study/web') 
+                {
                 script {
                     // Deploy with Helm
                     sh """
@@ -97,6 +99,7 @@ pipeline {
                         export KUBECONFIG=$KUBECONFIG
                         helm upgrade --install web ./web --namespace default --create-namespace
                     """
+                }
                 }
             }
         }
